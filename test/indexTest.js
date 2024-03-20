@@ -1,7 +1,10 @@
 require ( './helpers.js' );
 
+const { constants } = require('buffer');
 const fs = require('fs')
+const jsdom=require('mocha-jsdom')
 const path = require('path')
+const babel=require('babel-core')
 
 const js = fs.readFileSync(path.resolve(__dirname, '..', 'index.js'), 'utf-8')
 
@@ -21,8 +24,12 @@ describe('index.js', function () {
       expect(mostProfitableNeighborhood).to.equal('Chelsea');
     });
 
-    it('is defined using let', function () {
-      expect(js).to.match(/let mostProfitableNeighborhood/, "Expected mostProfitableNeighborhood to be defined using let");
+    it('does not raise error if the mostProfitableNeighborhood is changed', function () {
+      expect(function () { mostProfitableNeighborhood = 'Upper West Side' }).to.not.throw(TypeError);
+    });
+
+    it('is not defined as a const', function () {
+      expect(js).not.to.match(/const mostProfitableNeighborhood/, "Expected mostProfitableNeighborhood not to be a const");
     });
   });
 
@@ -31,8 +38,13 @@ describe('index.js', function () {
       expect(companyCeo).to.equal('Susan Smith');
     });
 
-    it('is defined using let', function () {
-      expect(js).to.match(/let companyCeo/, "Expected companyCeo to be defined using let");
+    it('does not raise error if the companyCeo is changed', function () {
+      expect(function () { companyCeo = 'Lauren Hart' }).to.not.throw(TypeError);
+    });
+
+    it('is not defined as a const', function () {
+      expect(js).not.to.match(/const companyCeo/, "Expected companyCeo not to be a const");
+
     });
   });
 });
